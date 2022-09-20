@@ -1,22 +1,20 @@
-import logo from './logo.svg';
 import './App.css';
+import { PlayButton, SlotMachineTable } from './components';
 
+// TODO: finish implementing frontend
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Welcome to our online slot machine.
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <PlayButton></PlayButton>
+        <SlotMachineTable></SlotMachineTable>
+        <section>
+          <div>Session credit: X</div>
+          <div>Account credit: Y</div>
+        </section>
       </header>
     </div>
   );
