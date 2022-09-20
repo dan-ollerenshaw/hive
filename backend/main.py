@@ -5,6 +5,7 @@ API endpoint definitions
 import logging
 
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
 from backend.models import GameModel
@@ -19,8 +20,15 @@ SECRET = "slotmachine"
 
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key=SECRET)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-
+# TODO: also return symbols from this endpoint
 @app.post("/play/", response_model=GameModel)
 def play(request: Request, game_model: GameModel):
     if request.session.get(SECRET) is None:
@@ -42,4 +50,4 @@ def cash_out(request: Request):
 # TODO: delete after testing
 @app.get("/dummy/")
 def dummy_endpoint():
-    return {"hello": "world"}
+    return {"roll": ["cherry", "lemon", "orange"]}
