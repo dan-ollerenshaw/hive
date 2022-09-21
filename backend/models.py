@@ -4,8 +4,15 @@ Request and response models for the API.
 
 from pydantic import BaseModel
 
-from backend.slot_machine import DEFAULT_CREDIT
+
+class RequestModel(BaseModel):
+    account_credit: int
 
 
-class GameModel(BaseModel):
-    credit: int = DEFAULT_CREDIT
+class PlayResponseModel(BaseModel):
+    session_credit: int
+    roll: list
+
+
+class CashOutResponseModel(BaseModel):
+    account_credit: int

@@ -3,51 +3,74 @@ API endpoint definitions
 """
 
 import logging
+import random
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
-from backend.models import GameModel
-from backend.slot_machine import SlotMachine
+from backend.exceptions import MissingSessionIDException, UnknownSessionIDException
+from backend.models import CashOutResponseModel, PlayResponseModel, RequestModel
+from backend.slot_machine import DEFAULT_CREDIT, SlotMachine
 
 logging.basicConfig(
     level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
-SECRET = "slotmachine"
+# FIXME: keeping track of sessions like this is bad
+# but I had trouble retaining sessions info from the frontend
+SESSION_ID_KEY = "x-session-id"
+SESSIONS = {}
 
 app = FastAPI()
-app.add_middleware(SessionMiddleware, secret_key=SECRET)
+# CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
-# TODO: also return symbols from this endpoint
-@app.post("/play/", response_model=GameModel)
-def play(request: Request, game_model: GameModel):
-    if request.session.get(SECRET) is None:
-        request.session[SECRET] = game_model.credit
-    credit = request.session.get(SECRET)
+
+@app.post("/play/", response_model=PlayResponseModel)
+def play(request: Request, request_model: RequestModel):
+    session = get_session_from_request(request)
+    credit = session["session_credit"] + request_model.account_credit
     slot_machine = SlotMachine(credit=credit)
-    slot_machine.play()
-    request.session[SECRET] = slot_machine.credit
-    return {"credit": slot_machine.credit}
+    roll = slot_machine.play()
+    session["session_credit"] = slot_machine.credit
+    return {"session_credit": slot_machine.credit, "roll": roll}
 
 
-@app.get("/cash_out/", response_model=GameModel)
+@app.get("/cash_out/", response_model=CashOutResponseModel)
 def cash_out(request: Request):
-    credit = request.session.get(SECRET)
-    request.session[SECRET] = None
-    return {"credit": credit}
+    session = get_session_from_request(request)
+    credit = session["session_credit"]
+    # reset the credit for this session
+    session["session_credit"] = 0
+    return {"account_credit": credit}
 
 
-# TODO: delete after testing
-@app.get("/dummy/")
-def dummy_endpoint():
-    return {"roll": ["cherry", "lemon", "orange"]}
+@app.get("/session_id/")
+def create_session_id(request: Request, response: Response):
+    # create a psuedo-random session ID
+    session_id = f"{request.headers['user-agent']}_{random.randint(1,10**7)}"
+    response.headers[SESSION_ID_KEY] = session_id
+    SESSIONS[session_id] = {"session_credit": DEFAULT_CREDIT}
+    return {"message": "session ID created"}
+
+
+def get_session_from_request(request):
+    """Return saved session data using the session key provided by a request from the frontend."""
+    session_id = request.headers.get(SESSION_ID_KEY)
+    if session_id is None:
+        raise MissingSessionIDException(
+            "Session ID is required. Call /session_id/ endpoint first."
+        )
+    session = SESSIONS.get(session_id)
+    if session is None:
+        raise UnknownSessionIDException("Unknown session ID.")
+    return session

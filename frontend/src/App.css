@@ -3,13 +3,13 @@
 }
 
 .App-logo {
-  height: 40vmin;
+  /* height: 40vmin; */
   pointer-events: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+    animation: App-logo-spin infinite 2s linear;
   }
 }
 
@@ -60,7 +60,7 @@
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
-  width: 20%;
+  width: 100%;
   word-break: break-word;
   border: 0;
 }
@@ -76,4 +76,12 @@
 .button-44:hover {
   border-bottom-style: none;
   border-color: #dadada;
+}
+
+.green {
+  background-color: green;
+}
+
+img {
+  border: 5px solid white;
 }

@@ -24,7 +24,7 @@ class SlotMachine:
         self.credit = credit
         self.cost_to_play = cost_to_play
 
-    def play(self):
+    def play(self) -> list[str]:
         """
         Perform a roll and adjust credit accordingly.
         """
@@ -38,8 +38,9 @@ class SlotMachine:
         else:
             logger.debug(f"You lose!")
         logger.debug(f"Credit: {self.credit}")
+        return roll
 
-    def _perform_roll(self) -> list:
+    def _perform_roll(self) -> list[str]:
         """
         Perform a roll, but potentially reroll depending on the current credit.
 
@@ -56,7 +57,7 @@ class SlotMachine:
             return self._roll()
         return roll
 
-    def _roll(self) -> list:
+    def _roll(self) -> list[str]:
         return [self._choose_symbol() for _ in range(NUM_BLOCKS)]
 
     def _choose_symbol(self) -> str:
