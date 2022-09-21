@@ -60,10 +60,10 @@ class SlotGame extends React.Component {
                     block1_spinning: true,
                     block2_spinning: true,
                 })
-                setTimeout(() => this.setState({ block0_spinning: false }), 100);
-                setTimeout(() => this.setState({ block1_spinning: false }), 200);
-                setTimeout(() => this.setState({ block2_spinning: false }), 300);
-                setTimeout(() => this.setState({ session_credit: credit }), 300);
+                setTimeout(() => this.setState({ block0_spinning: false }), 1000);
+                setTimeout(() => this.setState({ block1_spinning: false }), 2000);
+                setTimeout(() => this.setState({ block2_spinning: false }), 3000);
+                setTimeout(() => this.setState({ session_credit: credit }), 3000);
                 this.setState({
                     // TODO: use loop here for rolls
                     roll0: images[roll[0]],
