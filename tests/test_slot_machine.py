@@ -9,7 +9,7 @@ from unittest.mock import MagicMock
 from backend.slot_machine import SlotMachine, NUM_BLOCKS
 
 
-class TestFoo(unittest.TestCase):
+class TestSlotMachine(unittest.TestCase):
     def setUp(self):
         slot = SlotMachine()
         self.symbols = list(slot.symbols.keys())
