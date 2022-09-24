@@ -7,7 +7,6 @@ import random
 
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.middleware.sessions import SessionMiddleware
 
 from backend.exceptions import MissingSessionIDException, UnknownSessionIDException
 from backend.models import CashOutResponseModel, PlayResponseModel, RequestModel
@@ -68,9 +67,13 @@ def get_session_from_request(request):
     session_id = request.headers.get(SESSION_ID_KEY)
     if session_id is None:
         raise MissingSessionIDException(
-            "Session ID is required. Call /session_id/ endpoint first."
+            status_code=500,
+            detail="Session ID is required. Call /session_id/ endpoint first.",
         )
     session = SESSIONS.get(session_id)
     if session is None:
-        raise UnknownSessionIDException("Unknown session ID.")
+        raise UnknownSessionIDException(
+            status_code=500,
+            detail="Unknown session ID.",
+        )
     return session

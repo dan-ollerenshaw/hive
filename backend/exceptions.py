@@ -1,6 +1,9 @@
-class MissingSessionIDException(Exception):
+from fastapi import HTTPException
+
+
+class MissingSessionIDException(HTTPException):
     pass
 
 
-class UnknownSessionIDException(Exception):
+class UnknownSessionIDException(HTTPException):
     pass
