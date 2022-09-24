@@ -8,6 +8,8 @@
 
 To launch the API, run this command from the root directory:
 
+`pip install -r requirements.txt` (first time only. ensure a virtual environment is active)
+
 `uvicorn backend.main:app --host 127.0.0.1 --port 8000`
 
 ### Frontend

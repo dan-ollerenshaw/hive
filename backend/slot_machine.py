@@ -72,3 +72,6 @@ class SlotMachine:
             p: probability that round should be rerolled. Should be in the interval [0, 1]
         """
         return random.choices([True, False], weights=[p, 1 - p])[0]
+    
+    def __repr__(self):
+        return f"<SlotMachine(credit={self.credit},cost_to_play={self.cost_to_play})>"
